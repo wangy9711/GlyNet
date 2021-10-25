@@ -1,0 +1,9 @@
+pytorch==1.7.1
+scipy==1.6.1
+dgl-cuda11.0==0.6.0post1
+dgllife==0.2.6
+numpy==1.19.2
+rdkit==2018.09.3
+tqdm==4.59.0
+protobuf==3.15.6
+tensorboard-logger==0.1.0
