@@ -82,9 +82,9 @@ if __name__ == '__main__':
 
     print(f"The probability that this glycan is immunogenic: {int(output[0][0]*100)}%")
     if int(output[0][0]*100)<50:
-        print(f"We think this glycan is not immunogenic.")
+        print(f"This glycan is not immunogenic.")
     else:
-        print(f"We think this glycan is immunogenic.")
+        print(f"This glycan is immunogenic.")
 
     
 
