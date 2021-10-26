@@ -1,4 +1,4 @@
-name: DGL2
+name: DGL
 channels:
   - pytorch
   - dglteam

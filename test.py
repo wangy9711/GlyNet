@@ -1,6 +1,7 @@
 import sys
 import os
 import torch
+import warnings
 
 from torch.autograd import Variable
 
@@ -12,7 +13,7 @@ from model.Config import ModelConfig, TestConfig, DataConfig
 data_cfg = DataConfig()
 model_cfg = ModelConfig()
 test_cfg = TestConfig()
-
+warnings.filterwarnings('ignore')
 
 if __name__ == '__main__':
     if len(sys.argv)!=3 :
@@ -59,8 +60,9 @@ if __name__ == '__main__':
             residual=residual)
     
     
-    checkpoint = torch.load(test_cfg.model_file)
+    checkpoint = torch.load(test_cfg.model_file,map_location=torch.device('cpu'))
     model.load_state_dict(checkpoint['state_dict'])
+    model.eval()
 
     if test_cfg.use_cuda and torch.cuda.is_available():
         use_cuda = 'cuda:' + test_cfg.use_cuda
@@ -78,7 +80,11 @@ if __name__ == '__main__':
 
     output = model(input_graph, n, e)
 
-    print(f"The probability that this glycan is immunogenic: {output}")
+    print(f"The probability that this glycan is immunogenic: {int(output[0][0]*100)}%")
+    if int(output[0][0]*100)<50:
+        print(f"We think this glycan is not immunogenic.")
+    else:
+        print(f"We think this glycan is immunogenic.")
 
     
 
