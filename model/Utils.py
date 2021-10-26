@@ -70,7 +70,15 @@ def save_model(model, ACC, path, filename):
     file = path + filename
     torch.save({'state_dict':model.state_dict(), 'ACC':ACC}, file)
 
-def train_model(train_loader, model, use_cuda, lossf, opt, epoch, logger, logtrain):
+def train_model(
+    train_loader, 
+    model, 
+    use_cuda, 
+    lossf, 
+    opt, 
+    epoch, 
+    logger, 
+    logtrain):
     model.train()
     for g, target in train_loader:
         
@@ -95,12 +103,23 @@ def train_model(train_loader, model, use_cuda, lossf, opt, epoch, logger, logtra
     ACC_value = logger.get_stat_value('train_ACC')
     logger.write_value(logtrain, [ACC_value, loss_value])
 
-    print('Epoch: [{0}/{1}] Train Avg Loss {loss_value:.3f}; Train Avg ACC {ACC_value:.3f};'.format(epoch, train_cfg.epochs, loss_value=loss_value, ACC_value=ACC_value))
+    print('Epoch: [{0}/{1}] Train Avg Loss {loss_value:.3f}; Train Avg ACC {ACC_value:.3f};'.format(
+        epoch, 
+        train_cfg.epochs, 
+        loss_value=loss_value, 
+        ACC_value=ACC_value))
     logger.clear_stat_log()
     return ACC_value
 
 
-def valid_model(valid_loader, model, use_cuda, lossf, epoch, logger, logvalid):
+def valid_model(
+    valid_loader, 
+    model, 
+    use_cuda, 
+    lossf, 
+    epoch, 
+    logger, 
+    logvalid):
     model.eval()
     for g, target in valid_loader:
         if use_cuda!='cpu':
@@ -129,7 +148,11 @@ def valid_model(valid_loader, model, use_cuda, lossf, epoch, logger, logvalid):
     acc = (TP+TN)/(TP+TN+FP+FN)
     Fscore = (2*pre*recall)/(pre+recall)
     logger.write_value(logvalid, [loss_value, pre, recall, acc, Fscore])
-    print('Epoch: [{0}/{1}] Valid Avg Loss {loss_value:.3f}; Valid Avg ACC {ACC_value:.3f};'.format(epoch, train_cfg.epochs, loss_value=loss_value, ACC_value=acc))
+    print('Epoch: [{0}/{1}] Valid Avg Loss {loss_value:.3f}; Valid Avg ACC {ACC_value:.3f};'.format(
+        epoch, 
+        train_cfg.epochs, 
+        loss_value=loss_value, 
+        ACC_value=acc))
     logger.clear_stat_log()
 
     return acc, loss_value

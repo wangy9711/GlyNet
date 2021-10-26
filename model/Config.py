@@ -8,7 +8,6 @@ class ModelConfig:
         self.residual = True
 
 
-
 class TrainConfig:
     def __init__(self):
         self.train_times = 100
@@ -36,7 +35,6 @@ class TestConfig:
     def __init__(self):
         self.model_file = './checkpoint/cpt.pth'
         self.use_cuda = False
-
 
 
 class DataConfig:

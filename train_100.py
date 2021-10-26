@@ -8,7 +8,13 @@ from torch.nn import functional as F
 
 from model.GlyNet import GlyNet
 from model.Config import DataConfig, TrainConfig, ModelConfig
-from model.Utils import read_file, collatef, get_lr_step, valid_model, train_model, save_model, test_model
+from model.Utils import read_file
+from model.Utils import collatef
+from model.Utils import get_lr_step
+from model.Utils import valid_model
+from model.Utils import train_model
+from model.Utils import save_model
+from model.Utils import test_model
 from model.database import GlyBase
 from model.Logger import Logger
 
@@ -39,9 +45,27 @@ if __name__ == '__main__':
         data_train = GlyBase(train_ids)
         data_valid = GlyBase(valid_ids)
 
-        train_loader = torch.utils.data.DataLoader(data_train, batch_size=train_cfg.batch_size, shuffle=True, collate_fn=collatef,num_workers=1,pin_memory=True)
-        valid_loader = torch.utils.data.DataLoader(data_valid, batch_size=train_cfg.batch_size, shuffle=True, collate_fn=collatef, num_workers=1,  pin_memory=True)
-        test_loader = torch.utils.data.DataLoader(data_test, batch_size=train_cfg.batch_size, shuffle=True, collate_fn=collatef, num_workers=1,  pin_memory=True)
+        train_loader = torch.utils.data.DataLoader(
+            data_train, 
+            batch_size=train_cfg.batch_size, 
+            shuffle=True, 
+            collate_fn=collatef,
+            num_workers=1,
+            pin_memory=True)
+        valid_loader = torch.utils.data.DataLoader(
+            data_valid, 
+            batch_size=train_cfg.batch_size, 
+            shuffle=True, 
+            collate_fn=collatef, 
+            num_workers=1,  
+            pin_memory=True)
+        test_loader = torch.utils.data.DataLoader(
+            data_test, 
+            batch_size=train_cfg.batch_size, 
+            shuffle=True, 
+            collate_fn=collatef, 
+            num_workers=1,  
+            pin_memory=True)
 
         g, target = data_train[0]
         node_size = g.ndata['x'].shape[1]
@@ -70,7 +94,11 @@ if __name__ == '__main__':
         opt = optim.Adam(model.parameters(), lr = train_cfg.lr)
         lossf = F.binary_cross_entropy
 
-        lr_step = get_lr_step(train_cfg.lr, train_cfg.lr_decay, train_cfg.lr_schedule, train_cfg.epochs)
+        lr_step = get_lr_step(
+            train_cfg.lr, 
+            train_cfg.lr_decay, 
+            train_cfg.lr_schedule, 
+            train_cfg.epochs)
 
         if train_cfg.use_cuda and torch.cuda.is_available():
             use_cuda = 'cuda:' + train_cfg.use_cuda

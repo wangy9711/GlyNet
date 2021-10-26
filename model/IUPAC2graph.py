@@ -4,6 +4,13 @@ from .Config import DataConfig
 import dgl
 from dgl import DGLGraph
 import torch
+import torch
+import os
+import numpy as np
+import random
+from torch import optim
+from torch import nn
+from torch.nn import functional as F
 
 cfg = DataConfig()
 
@@ -76,7 +83,13 @@ def get_gly_feature(gly, gly_dict, gly_amount, monose_feature):
     ret[0][0] = gly_index
     return ret
 
-def IUPAC2graph(IUPAC, gly_dict, gly_amount, link_dict, link_amount,monose_feature):
+def IUPAC2graph(
+    IUPAC, 
+    gly_dict, 
+    gly_amount, 
+    link_dict, 
+    link_amount,
+    monose_feature):
     all_element = str_parse(IUPAC)
     all_element.reverse()
     L = len(all_element)
@@ -91,10 +104,16 @@ def IUPAC2graph(IUPAC, gly_dict, gly_amount, link_dict, link_amount,monose_featu
             this_link = all_element[i][1:-1]
             g.add_nodes(1)
             g.add_edge(curr, g.num_nodes()-1)
-            g.edges[[edge_count]].data['x'] = get_link_feature(this_link, link_dict, link_amount)
+            g.edges[[edge_count]].data['x'] = get_link_feature(
+                this_link, 
+                link_dict, 
+                link_amount)
             edge_count += 1
             g.add_edge(g.num_nodes()-1,curr)
-            g.edges[[edge_count]].data['x'] = get_link_feature(this_link, link_dict, link_amount)
+            g.edges[[edge_count]].data['x'] = get_link_feature(
+                this_link, 
+                link_dict, 
+                link_amount)
             edge_count += 1
 
             curr = g.num_nodes()-1
@@ -106,7 +125,11 @@ def IUPAC2graph(IUPAC, gly_dict, gly_amount, link_dict, link_amount,monose_featu
             node_stack.append(curr)
 
         else:
-            g.nodes[[curr]].data['x'] = get_gly_feature(all_element[i], gly_dict, gly_amount, monose_feature)
+            g.nodes[[curr]].data['x'] = get_gly_feature(
+                all_element[i], 
+                gly_dict, 
+                gly_amount, 
+                monose_feature)
         
         i+=1
     
@@ -126,12 +149,22 @@ def get_dict(all_gly):
         begin +=1
     return rets
 
-def get_data_from_code(code, given_gly_list, given_link_list, monose_feature):
+def get_data_from_code(
+    code, 
+    given_gly_list, 
+    given_link_list, 
+    monose_feature):
     gly_dict = get_dict(given_gly_list)
     link_dict = get_dict(given_link_list)
     gly_amount = len(given_gly_list)
     link_amount = len(given_link_list)
-    g = IUPAC2graph(code, gly_dict, gly_amount, link_dict, link_amount, monose_feature)
+    g = IUPAC2graph(
+        code, 
+        gly_dict, 
+        gly_amount, 
+        link_dict, 
+        link_amount, 
+        monose_feature)
     
     return g
                 
@@ -142,14 +175,4 @@ if __name__ == '__main__':
     g = get_data_from_code(code, cfg.glycan, cfg.link, cfg.monose)
     print(g.ndata['feature'].shape)
     
-
-
-    
-
-
-
-
-
-
-
 

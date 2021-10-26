@@ -1,5 +1,11 @@
 import torch.utils.data as data
-
+import torch
+import os
+import numpy as np
+import random
+from torch import optim
+from torch import nn
+from torch.nn import functional as F
 from .IUPAC2graph import get_data_from_code
 from .Config import DataConfig
 
@@ -31,12 +37,20 @@ class GlyBase(data.Dataset):
             code = a[0]
             target = int(a[1])
 
-        g = get_data_from_code(code, self.gly_list, self.link_list, self.monose_feature)
+        g = get_data_from_code(
+            code, 
+            self.gly_list, 
+            self.link_list, 
+            self.monose_feature)
         return g, [float(target)]
     
     def get_data_without_label(self, index):
         code = self.raw_data[index]
-        g = get_data_from_code(code, self.gly_list, self.link_list, self.monose_feature)
+        g = get_data_from_code(
+            code, 
+            self.gly_list, 
+            self.link_list, 
+            self.monose_feature)
         return g
 
     def __len__(self):

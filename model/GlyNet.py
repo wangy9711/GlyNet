@@ -4,9 +4,28 @@ from dgllife.model.readout import WeightedSumAndMax
 from torch import nn
 import torch
 from torch.nn.modules.activation import Sigmoid
+import torch
+import os
+import numpy as np
+import random
+from torch import optim
+from torch import nn
+from torch.nn import functional as F
+
 
 class GlyNet(nn.Module):
-    def __init__(self, edge_feature_size, node_type, target_size, message_size, graph_size, mid_size, layers, dropout, residual, task = 'classification'):
+    def __init__(
+        self, 
+        edge_feature_size, 
+        node_type, 
+        target_size, 
+        message_size, 
+        graph_size, 
+        mid_size, 
+        layers, 
+        dropout, 
+        residual, 
+        task = 'classification'):
         super(GlyNet, self).__init__()
         self.edge_feature_size = edge_feature_size
         self.node_type = node_type
@@ -19,12 +38,25 @@ class GlyNet(nn.Module):
         self.dropout = dropout
         self.residual = residual
 
-        self.gnn = nn.ModuleList([GNNOGB(in_edge_feats=self.edge_feature_size, num_node_types=self.node_type, hidden_feats=self.message_size, gnn_type='gin', dropout=self.dropout,residual=self.residual, n_layers=self.layers)])
+        self.gnn = nn.ModuleList([GNNOGB(
+            in_edge_feats=self.edge_feature_size, 
+            num_node_types=self.node_type, 
+            hidden_feats=self.message_size, 
+            gnn_type='gin', 
+            dropout=self.dropout,
+            residual=self.residual, 
+            n_layers=self.layers)])
 
         #self.readout = nn.ModuleList([WeightedSumAndMax(in_feats=hidden_size[-1])])
-        self.readout = nn.ModuleList([MLPNodeReadout(node_feats=self.message_size, hidden_feats=self.graph_size, graph_feats=self.graph_size, activation=torch.sigmoid)])
+        self.readout = nn.ModuleList([MLPNodeReadout(
+            node_feats=self.message_size, 
+            hidden_feats=self.graph_size, 
+            graph_feats=self.graph_size, 
+            activation=torch.sigmoid)])
 
-        self.task_layer = nn.ModuleList([nn.Linear(self.graph_size, self.mid_size), nn.Linear(self.mid_size, target_size)])
+        self.task_layer = nn.ModuleList([
+            nn.Linear(self.graph_size, self.mid_size), 
+            nn.Linear(self.mid_size, target_size)])
         #self.task_layer = nn.ModuleList([nn.Linear(mid_layers, target_size)])
             
     def forward(self, g, n, e):
